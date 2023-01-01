@@ -1,0 +1,13 @@
+name = "UVWExplorer"
+uuid = "c1ba38e0-344e-43f6-9b32-d11a345720ba"
+authors = ["David MacMahon <davidm@astro.berkeley.edu>"]
+version = "0.1.0"
+
+[deps]
+ERFA = "17511681-8477-586a-8d98-4cfd5a1f2ec3"
+EarthOrientation = "732a3c5d-d6c0-58bc-adb1-1b51709a25e2"
+HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
+Optim = "429524aa-4258-5aef-a3af-852621145aeb"
+PyCASA = "c0371cf2-69c1-404b-9565-f01b56f8974e"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
