@@ -20,11 +20,11 @@ function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
     alt = obslla.alt
 
     # Convert ra,dec from ICRS to GCRS.  For completeness, this involves space
-    # motion, parallax, light deflection, and abberation, but here we just do
-    # light deflection due to the sun and abberation.  We use `apco13` rather
+    # motion, parallax, light deflection, and aberration, but here we just do
+    # light deflection due to the sun and aberration.  We use `apco13` rather
     # than `apcg13` because the former includes observatory position/velocity in
     # the astrometry parameters used to calculate light deflection and
-    # abberation whereas the latter does not.
+    # aberration whereas the latter does not.
     astrom = apco13(jd, 0, dut1, lon, lat, alt, xp, yp, 0, 0, 0, 0)[1]
     srcvec = s2c(ra, dec)
     ldvec = ldsun(srcvec, astrom.eh, astrom.em)
