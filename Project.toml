@@ -1,7 +1,7 @@
 name = "UVWExplorer"
 uuid = "c1ba38e0-344e-43f6-9b32-d11a345720ba"
 authors = ["David MacMahon <davidm@astro.berkeley.edu>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 ERFA = "17511681-8477-586a-8d98-4cfd5a1f2ec3"
