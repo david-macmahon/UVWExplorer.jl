@@ -67,20 +67,15 @@ function __init__()
         # Rotate antenna positions into UVW frame.
         antpos_uvw_ap = antpos_c_ap.transform_to(frame_uvw)
 
-        # Full set of baselines would be differences between all pairs of 
-        # antenna positions, but we'll just do relative to the first antenna
-        # for simplicity.
-        bl_uvw_ap = antpos_uvw_ap.cartesian - antpos_uvw_ap.cartesian[0]
-
         # SkyOffsetFrame coords seem to come out as WUV, so shuffle into UVW order:
         return coord.CartesianRepresentation(
-                x = bl_uvw_ap.y,
-                y = bl_uvw_ap.z,
-                z = bl_uvw_ap.x)
+                x = antpos_uvw_ap.cartesian.y,
+                y = antpos_uvw_ap.cartesian.z,
+                z = antpos_uvw_ap.cartesian.x)
     """
 end # function __init__
 
-function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
+function radec2uvws(ra, dec, jd, obslla, xyz;
                     dut1=nothing, xp=nothing, yp=nothing)
     # Warn once if any EOP values are given
     if any((dut1, xp, yp) .!== nothing)
@@ -88,7 +83,20 @@ function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
     end
 
     obsitrf = gd2gc(WGS84, deg2rad(obslla.lon), deg2rad(obslla.lat), obslla.alt)
-    antuvw = py"compute_uvws"(ra, dec, jd, obsitrf, antxyz').xyz
+    py"compute_uvws"(ra, dec, jd, obsitrf, xyz').xyz
+end
+
+function radec2uvws(ra, dec, jd, obslla;
+                    dut1=nothing, xp=nothing, yp=nothing)
+    radec2uvws(ra, dec, jd, obslla, [1.0 0.0 0.0
+                                     0.0 1.0 0.0
+                                     0.0 0.0 1.0]; dut1, xp, yp)
+end
+
+function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
+                    dut1=nothing, xp=nothing, yp=nothing)
+    antuvw = radec2uvws(ra, dec, jd, obslla, antxyz; dut1, xp, yp)
+    # Compute baselines
     mapreduce(hcat, bls) do (a1, a2)
         antuvw[:, a2] - antuvw[:, a1]
     end

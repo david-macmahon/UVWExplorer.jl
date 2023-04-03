@@ -3,7 +3,7 @@ module GCRSUVW
 import Rotations: RotY, RotZ
 import ERFA: DAS2R, c2t06a, apco13, ldsun, ab, s2c, c2s, utctai, taitt
 
-function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
+function radec2uvws(ra, dec, jd, obslla;
                     dut1=nothing, xp=nothing, yp=nothing)
     # Convert nothings to default values
     dut1 = something(dut1, 0.0)
@@ -41,12 +41,21 @@ function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
     # transpose of ERFA's celestial-to-terrestrial ("c2t") matrix.
     xyz2gcrs = c2t06a(tt1, tt2, jd, dut1/86400, xp*DAS2R, yp*DAS2R)'
 
-    # Transform antxyz to antuvw
-    antuvw = gcrs2uvw * xyz2gcrs * antxyz
+    # Transform xyz to uvw
+    gcrs2uvw * xyz2gcrs
+end
 
+function radec2uvws(ra, dec, jd, obslla, xyz;
+                    dut1=nothing, xp=nothing, yp=nothing)
+    radec2uvws(ra, dec, jd, obslla; dut1, xp, yp) * xyz
+end
+
+function radec2uvws(ra, dec, jd, obslla, antxyz, bls;
+                    dut1=nothing, xp=nothing, yp=nothing)
+    antuvw = radec2uvws(ra, dec, jd, obslla, antxyz; dut1, xp, yp)
     # Compute baselines
-    mapreduce(hcat, bls) do (a1i, a2i)
-        antuvw[:, a2i] - antuvw[:, a1i]
+    mapreduce(hcat, bls) do (a1, a2)
+        antuvw[:, a2] - antuvw[:, a1]
     end
 end
 
